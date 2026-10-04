@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الحضور والمواد المدرسية</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <header class="attendance-header">
+        <h1>🏫 نظام إدارة الحضور والنتائج المدرسية</h1>
+        <p>مدرسة السادات الابتدائية بميت غمر - الدقهلية</p>
+    </header>
+
+    <main class="attendance-container">
+
+        <div class="stats">
+            <div class="stat-card">
+                <span>👨‍🎓</span>
+                <div>
+                    <strong id="totalStudents">0</strong>
+                    <small>إجمالي الطلاب</small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span>🏫</span>
+                <div>
+                    <strong id="totalClasses">0</strong>
+                    <small>الفصول الدراسية</small>
+                </div>
+            </div>
+            <div class="stat-card present-stat">
+                <span>📚</span>
+                <div>
+                    <strong id="totalGrades">0</strong>
+                    <small>عدد الصفوف</small>
+                </div>
+            </div>
+            <div class="card pending-stat">
+                <span>📋</span>
+                <div>
+                    <strong id="totalSubjects">9</strong>
+                    <small>المواد الدراسية</small>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="margin: 20px 8px 15px; color:#1e293b; font-weight:700;">🎯 لوحة التحكم الرئيسية</h2>
+
+        <div class="dashboard">
+
+            <div class="card">
+                <h2>👨‍🎓</h2>
+                <h3>إدارة الطلاب</h3>
+                <p>إضافة وتعديل وحذف بيانات الطلاب وطباعة باركود كل طالب</p>
+                <button onclick="window.location.href='students.html'">فتح صفحة الطلاب</button>
+            </div>
+
+            <div class="card">
+                <h2>📅</h2>
+                <h3>الحضور والغياب</h3>
+                <p>تسجيل حضور وغياب الطلاب يومياً مع ميزة مسح الباركود</p>
+                <button onclick="window.location.href='attendance.html'">فتح رصد الغياب</button>
+            </div>
+
+            <div class="card">
+                <h2>🎓</h2>
+                <h3>بوابة النتائج</h3>
+                <p>إدخال وعرض نتائج المواد الدراسية وطباعة وتصدير الكشوفات</p>
+                <button onclick="window.location.href='results.html'" style="background: linear-gradient(135deg,#f59e0b,#ef4444);">
+                    🚀 فتح بوابة النتائج
+                </button>
+            </div>
+
+            <div class="card">
+                <h2>📊</h2>
+                <h3>تقارير الحضور</h3>
+                <p>تقارير تفصيلية للحضور والغياب مع إمكانية طباعة وتصدير Excel</p>
+                <button onclick="window.location.href='reports.html'">فتح التقارير</button>
+            </div>
+
+            <div class="card">
+                <h2>📈</h2>
+                <h3>الإحصائيات البيانية</h3>
+                <p>رسوم بيانية ونسب الحضور لكل فصل وكل طالب</p>
+                <button onclick="window.location.href='statistics.html'">فتح الإحصائيات</button>
+            </div>
+
+            <div class="card">
+                <h2>📱</h2>
+                <h3>ماسح الباركود</h3>
+                <p>صفحة مخصصة لمسح باركودات الطلاب بكاميرا الهاتف للحضور السريع</p>
+                <button onclick="window.location.href='scanner.html'" style="background: linear-gradient(135deg,#6366f1,#8b5cf6);">
+                    🎥 فتح الماسح
+                </button>
+            </div>
+
+            <div class="card">
+                <h2>📅</h2>
+                <h3>التقييمات الشهرية</h3>
+                <p>إدخال وعرض درجات التقييمات الشهرية لكل المواد مع طباعة وتصدير Excel</p>
+                <button onclick="window.location.href='monthly-evals.html'" style="background: linear-gradient(135deg,#ec4899,#f43f5e);">
+                    📅 فتح التقييمات الشهرية
+                </button>
+            </div>
+
+        </div>
+
+        <h2 style="margin: 25px 8px 15px; color:#1e293b; font-weight:700;">🔐 بوابات الدخول الشخصية</h2>
+
+        <div class="dashboard">
+
+            <div class="card" style="border-top: 4px solid #16a34a;">
+                <h2>�‍🏫</h2>
+                <h3>دخول المدرس / المدير</h3>
+                <p>لوحة تحكم إدارة للعمليات اليومية على الطلاب والحضور والنتائج</p>
+                <button onclick="window.location.href='login.html'" style="background: linear-gradient(135deg,#16a34a,#22c55e);">
+                    ✅ دخول المدرسين
+                </button>
+            </div>
+
+            <div class="card" style="border-top: 4px solid #2563eb;">
+                <h2>🧑‍🎓</h2>
+                <h3>دخول الطالب</h3>
+                <p>لوحة تحكم للطالب لمتابعة درجاته وسجل الحضور الشخصي (تسجيل بـ id الطالب)</p>
+                <button onclick="window.location.href='login.html'" style="background: linear-gradient(135deg,#2563eb,#3b82f6);">
+                    🎓 دخول الطلاب
+                </button>
+            </div>
+
+        </div>
+
+        <div style="margin-top:30px;" class="report-box">
+            <h2>📢 معلومات سريعة</h2>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:15px;">
+                <div style="background:#f8fafc; padding:18px; border-radius:12px; border-right:4px solid #4f46e5;">
+                    <p style="font-weight:700; color:#1e293b; margin:0 0 8px;">🏫 المديرية / الإدارة</p>
+                    <p style="margin:0; color:#475569;">الدقهلية - إدارة ميت غمر</p>
+                </div>
+                <div style="background:#f8fafc; padding:18px; border-radius:12px; border-right:4px solid #16a34a;">
+                    <p style="font-weight:700; color:#1e293b; margin:0 0 8px;">📚 المرحلة / المدرسة</p>
+                    <p style="margin:0; color:#475569;">المرحلة الابتدائية - مدرسة السادات الابتدائية (رسمي)</p>
+                </div>
+                <div style="background:#f8fafc; padding:18px; border-radius:12px; border-right:4px solid #ef4444;">
+                    <p style="font-weight:700; color:#1e293b; margin:0 0 8px;">💡 تلميح سريع</p>
+                    <p style="margin:0; color:#475569;">يمكن للطلاب الدخول بـ id الطالب (كاسم مستخدم وكلمة مرور معاً)</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer style="text-align:center; padding:24px; color:#64748b; font-size:13px; background:#f8fafc; margin-top:40px; border-top:1px solid #e2e8f0;">
+        <p>🚀 نظام إدارة الحضور والنتائج المدرسية - مدارس الدقهلية الرسمية</p>
+        <p style="margin-top:4px;">جميع الحقوق محفوظة © 2025</p>
+    </footer>
+
+    <script src="database.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const db = initDatabase();
+            document.getElementById("totalStudents").textContent = db.students.length;
+            document.getElementById("totalClasses").textContent = db.classes.length;
+            document.getElementById("totalGrades").textContent = db.grades.length;
+            document.getElementById("totalSubjects").textContent = getSubjects().length;
+        });
+    </script>
+
+</body>
+
+</html>

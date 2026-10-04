@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة التقييمات الشهرية للمواد</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <header class="attendance-header">
+        <div class="back-home">
+            <button onclick="window.location.href='index.html'">
+                🏠 العودة للرئيسية
+            </button>
+        </div>
+        <h1>📅 بوابة التقييمات الشهرية</h1>
+        <p>إدارة وعرض درجات التقييمات الشهرية لجميع المواد</p>
+    </header>
+
+    <main class="attendance-container">
+
+        <div class="nav-menu">
+            <button id="tabEnter" class="active" onclick="switchMonthlyTab('enter')">✏️ إدخال التقييمات</button>
+            <button id="tabView" onclick="switchMonthlyTab('view')">📊 عرض التقييمات</button>
+        </div>
+
+        <div id="enterSection">
+            <div class="top-bar">
+                <div>
+                    <label for="gradeSelect">📚 الصف الدراسي</label>
+                    <select id="gradeSelect" onchange="populateMonthlyClasses()">
+                        <option value="">اختر الصف</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="classSelect">🏫 الفصل</label>
+                    <select id="classSelect" onchange="loadMonthlyForEntry()">
+                        <option value="">اختر الفصل</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="subjectSelect">📖 المادة</label>
+                    <select id="subjectSelect">
+                    </select>
+                </div>
+                <div>
+                    <label for="monthSelect">🗓️ الشهر الدراسي</label>
+                    <select id="monthSelect">
+                    </select>
+                </div>
+            </div>
+
+            <div class="action-buttons" style="margin: 0 0 20px 0; padding: 16px; background: var(--card); border-radius: 16px; box-shadow: var(--shadow);">
+                <button class="save-btn" onclick="saveAllMonthlyEvals()">💾 حفظ التقييمات</button>
+                <button class="print-btn" onclick="printMonthlyEntry()">🖨️ طباعة الكشف</button>
+                <button class="export-btn" onclick="exportMonthlyEntry()">📥 تصدير Excel</button>
+                <label class="import-btn" style="cursor:pointer; display:inline-block;">
+                    📤 استيراد من Excel
+                    <input type="file" id="importMonthly" accept=".xlsx,.xls,.csv" style="display:none;" onchange="importMonthlyEvals(event)">
+                </label>
+            </div>
+
+            <div id="monthlyEntrySection" class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>م</th>
+                            <th>🆔 id</th>
+                            <th>👤 اسم الطالب</th>
+                            <th>🚻 الجنس</th>
+                            <th id="monthlySubjectHeader">الدرجة الشهرية (من 100)</th>
+                            <th>📊 التقدير</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monthlyEntryTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="viewSection" class="hidden">
+            <div class="top-bar">
+                <div>
+                    <label for="viewGradeSelect">📚 الصف الدراسي</label>
+                    <select id="viewGradeSelect" onchange="populateMonthlyViewClasses()">
+                        <option value="">اختر الصف</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="viewClassSelect">🏫 الفصل</label>
+                    <select id="viewClassSelect" onchange="rebuildMonthlyViewHeaders(); loadMonthlyView();">
+                        <option value="">اختر الفصل</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="viewMonthSelect">🗓️ الشهر الدراسي</label>
+                    <select id="viewMonthSelect" onchange="loadMonthlyView()">
+                    </select>
+                </div>
+            </div>
+
+            <div class="results-summary">
+                <div class="summary-item">
+                    <label>عدد الطلاب</label>
+                    <div class="value" id="sumMonthlyCount">0</div>
+                </div>
+                <div class="summary-item">
+                    <label>المجموع الكلي</label>
+                    <div class="value" id="sumMonthlyTotal">0</div>
+                </div>
+                <div class="summary-item">
+                    <label>المجموع الأعلى</label>
+                    <div class="value" style="color:#16a34a;" id="sumMonthlyMax">0</div>
+                </div>
+                <div class="summary-item">
+                    <label>المجموع الأدنى</label>
+                    <div class="value" style="color:#dc2626;" id="sumMonthlyMin">0</div>
+                </div>
+                <div class="summary-item">
+                    <label>نسبة النجاح</label>
+                    <div class="value" style="color:#4f46e5;" id="sumMonthlyPass">0%</div>
+                </div>
+            </div>
+
+            <div class="action-buttons" style="margin: 0 0 20px 0;">
+                <button class="print-btn" onclick="printMonthlyView()">🖨️ طباعة البطاقة</button>
+                <button class="export-btn" onclick="exportMonthlyView()">📥 تصدير Excel</button>
+            </div>
+
+            <div id="monthlyViewContainer" class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>🏆 الرتبة</th>
+                            <th>🆔 id</th>
+                            <th>👤 اسم الطالب</th>
+                            <th>🚻 الجنس</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monthlyViewTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="database.js"></script>
+    <script src="utils.js"></script>
+    <script src="monthly-evals.js"></script>
+
+</body>
+
+</html>

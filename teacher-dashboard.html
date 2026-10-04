@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المدرس / المدير</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="attendance-header">
+        <h1>👨‍🏫 لوحة تحكم المدرس / المدير</h1>
+        <p>إدارة الحضور والنتائج والطلاب</p>
+    </header>
+
+    <main class="attendance-container">
+
+        <div class="student-info-card">
+            <div class="student-avatar" style="background: linear-gradient(135deg,#f59e0b,#ef4444);">👨‍🏫</div>
+            <div class="student-details">
+                <h2 id="teacherName">-</h2>
+                <p>💼 <strong>نوع الحساب:</strong> <span id="teacherRole">-</span></p>
+                <p>👤 <strong>اسم المستخدم:</strong> <span id="teacherUsername">-</span></p>
+                <p id="loginTime" style="color:#64748b; font-size:13px;">آخر تسجيل دخول: -</p>
+            </div>
+            <button class="logout-btn" onclick="logout()">🚪 تسجيل الخروج</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <span>👨‍🎓</span>
+                <div>
+                    <strong id="totalStudents">0</strong>
+                    <small>إجمالي الطلاب</small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span>🏫</span>
+                <div>
+                    <strong id="totalClasses">0</strong>
+                    <small>عدد الفصول</small>
+                </div>
+            </div>
+            <div class="stat-card present-stat">
+                <span>📚</span>
+                <div>
+                    <strong id="totalGrades">6</strong>
+                    <small>الصفوف الدراسية</small>
+                </div>
+            </div>
+            <div class="stat-card pending-stat">
+                <span>📋</span>
+                <div>
+                    <strong id="todayAttendance">0</strong>
+                    <small>سجلات الحضور اليوم</small>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="margin: 20px 8px 15px; color:#1e293b; font-weight:700;">📌 الإجراءات السريعة</h2>
+
+        <div class="dashboard">
+            <div class="card">
+                <h2>👨‍🎓</h2>
+                <h3>إدارة الطلاب</h3>
+                <p>إضافة وتعديل وحذف بيانات الطلاب مع الباركود</p>
+                <button onclick="navigate('students.html')">فتح إدارة الطلاب</button>
+            </div>
+
+            <div class="card">
+                <h2>📅</h2>
+                <h3>رصد الحضور والغياب</h3>
+                <p>تسجيل حضور الطلاب عبر الباركود أو يدوياً</p>
+                <button onclick="navigate('attendance.html')">فتح رصد الغياب</button>
+            </div>
+
+            <div class="card">
+                <h2>🎓</h2>
+                <h3>بوابة النتائج</h3>
+                <p>إدارة درجات المواد وعرض تقارير النتائج</p>
+                <button onclick="navigate('results.html')">فتح بوابة النتائج</button>
+            </div>
+
+            <div class="card">
+                <h2>📊</h2>
+                <h3>تقارير الحضور</h3>
+                <p>تقارير مفصلة عن حضور وغياب كل طالب</p>
+                <button onclick="navigate('reports.html')">عرض التقارير</button>
+            </div>
+
+            <div class="card">
+                <h2>📈</h2>
+                <h3>الإحصائيات البيانية</h3>
+                <p>متابعة نسب الحضور والغياب بتصور بياني</p>
+                <button onclick="navigate('statistics.html')">فتح الإحصائيات</button>
+            </div>
+
+            <div class="card">
+                <h2>🏠</h2>
+                <h3>الصفحة الرئيسية</h3>
+                <p>العودة للوحة التحكم الرئيسية للمشروع</p>
+                <button onclick="navigate('index.html')">الرئيسية</button>
+            </div>
+
+            <div class="card">
+                <h2>📅</h2>
+                <h3>التقييمات الشهرية</h3>
+                <p>إدخال وعرض درجات التقييمات الشهرية لكل المواد</p>
+                <button onclick="navigate('monthly-evals.html')" style="background: linear-gradient(135deg,#ec4899,#f43f5e);">
+                    📅 فتح التقييمات الشهرية
+                </button>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px;" class="report-box">
+            <h2>🚀 إجراءات إضافية</h2>
+            <div class="action-buttons">
+                <button class="export-btn" onclick="exportFullDatabase()">📥 تصدير قاعدة البيانات كاملة</button>
+                <button class="import-btn" onclick="document.getElementById('fullImport').click()">
+                    📤 استيراد قاعدة بيانات
+                </button>
+                <input type="file" id="fullImport" accept=".json" style="display:none;" onchange="importFullDatabase(event)">
+                <button class="print-btn" onclick="window.print()">🖨️ طباعة هذه الصفحة</button>
+            </div>
+            <div class="input-hint" style="margin-top: 10px;">
+                💡 يمكنك نسخ نسخة احتياطية من البيانات كاملة كملف JSON والاحتفاظ بها لأي وقت
+            </div>
+        </div>
+
+    </main>
+
+    <script src="database.js"></script>
+    <script src="utils.js"></script>
+    <script>
+        function initTeacherDashboard() {
+            const session = getCurrentSession();
+            if (!session || (session.role !== "teacher" && session.role !== "admin")) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            document.getElementById("teacherName").textContent = session.name;
+            document.getElementById("teacherUsername").textContent = session.username;
+            document.getElementById("teacherRole").textContent =
+                session.role === "admin" ? "مدير النظام 👑" : "مدرس 👨‍🏫";
+            try {
+                document.getElementById("loginTime").textContent =
+                    "آخر تسجيل دخول: " + new Date(session.loginTime).toLocaleString('ar-EG');
+            } catch (e) {}
+
+            const db = initDatabase();
+            document.getElementById("totalStudents").textContent = db.students.length;
+            document.getElementById("totalClasses").textContent = db.classes.length;
+            document.getElementById("totalGrades").textContent = db.grades.length;
+
+            const today = new Date().toISOString().split('T')[0];
+            let count = 0;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith("attendance_" + today)) count++;
+            }
+            document.getElementById("todayAttendance").textContent = count;
+        }
+
+        function navigate(url) {
+            window.location.href = url;
+        }
+
+        function logout() {
+            logoutUser();
+            window.location.href = "login.html";
+        }
+
+        function exportFullDatabase() {
+            initUsersDB();
+            initMonthlyEvalsDB();
+            const fullData = {
+                exportedAt: new Date().toISOString(),
+                version: "2.0",
+                attendanceDB: initDatabase(),
+                resultsDB: initResultsDB(),
+                usersDB: getUsersDB(),
+                monthlyEvalsDB: getMonthlyEvalsDB(),
+                currentSession: JSON.parse(localStorage.getItem("currentSession") || "null")
+            };
+            const attendanceRecords = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k.startsWith("attendance_")) {
+                    try { attendanceRecords[k] = JSON.parse(localStorage.getItem(k)); }
+                    catch (e) {}
+                }
+            }
+            fullData.attendanceRecords = attendanceRecords;
+
+            const blob = new Blob([JSON.stringify(fullData, null, 2)],
+                { type: "application/json;charset=utf-8;" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `نسخة_احتياطية_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            showToast("✅ تم تصدير قاعدة البيانات بنجاح", "success");
+        }
+
+        function importFullDatabase(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!confirm("سيتم استبدال جميع البيانات الحالية بالملف المستورد، هل أنت متأكدة؟")) {
+                event.target.value = "";
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.attendanceDB) {
+                        localStorage.setItem(DB_KEY, JSON.stringify(data.attendanceDB));
+                    }
+                    if (data.resultsDB) {
+                        localStorage.setItem(RESULTS_KEY, JSON.stringify(data.resultsDB));
+                    }
+                    if (data.usersDB) {
+                        localStorage.setItem(USERS_KEY, JSON.stringify(data.usersDB));
+                    }
+                    if (data.monthlyEvalsDB) {
+                        localStorage.setItem(MONTHLY_EVALS_KEY, JSON.stringify(data.monthlyEvalsDB));
+                    }
+                    if (data.currentSession) {
+                        localStorage.setItem("currentSession", JSON.stringify(data.currentSession));
+                    }
+                    if (data.attendanceRecords) {
+                        Object.keys(data.attendanceRecords).forEach(k => {
+                            localStorage.setItem(k, JSON.stringify(data.attendanceRecords[k]));
+                        });
+                    }
+                    showToast("✅ تم استيراد قاعدة البيانات بنجاح", "success");
+                    setTimeout(() => location.reload(), 1200);
+                } catch (err) {
+                    showToast("❌ خطأ في قراءة الملف: " + err.message, "error");
+                }
+            };
+            reader.readAsText(file, "utf-8");
+            event.target.value = "";
+        }
+
+        document.addEventListener("DOMContentLoaded", initTeacherDashboard);
+    </script>
+
+</body>
+
+</html>

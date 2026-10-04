@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="login-wrapper">
+
+    <div class="login-card">
+        <div class="icon">🔐</div>
+        <h2>تسجيل الدخول</h2>
+        <p class="subtitle">اختر نوع الحساب ثم أدخل بيانات الاعتماد</p>
+
+        <div class="role-tabs">
+            <button class="role-tab active" data-role="student" onclick="switchRole('student')">
+                👨‍🎓 طالب
+            </button>
+            <button class="role-tab" data-role="teacher" onclick="switchRole('teacher')">
+                👨‍🏫 مدرس
+            </button>
+            <button class="role-tab" data-role="admin" onclick="switchRole('admin')">
+                👑 مدير
+            </button>
+        </div>
+
+        <div id="loginError" class="login-error hidden"></div>
+
+        <form class="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label id="usernameLabel">🆔 id</label>
+                <input type="text" id="username" placeholder="أدخل id الطالب (9 أرقام)" required autocomplete="username">
+            </div>
+
+            <div class="form-group">
+                <label id="passwordLabel">🔒 كلمة المرور</label>
+                <input type="password" id="password" placeholder="أدخل كلمة المرور" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="login-btn">
+                ✅ تسجيل الدخول
+            </button>
+        </form>
+
+        <div class="login-hint" id="loginHint">
+            <strong>💡 تلميح للطلاب:</strong> استخدم id الطالب (9 أرقام) كاسم مستخدم وكلمة مرور معاً.<br>
+            <strong>💡 تلميح للمدير:</strong> اسم المستخدم: <code>admin</code> ، كلمة المرور: <code>123456</code><br>
+            <strong>💡 تلميح للمدرسين:</strong> اسم المستخدم: <code>teacher</code> ، كلمة المرور: <code>123456</code>
+        </div>
+
+        <div style="text-align:center; margin-top: 12px;">
+            <button onclick="toggleRegister()" style="background:transparent; border:none; color:#2563eb; cursor:pointer; font-weight:600; text-decoration:underline;">
+                🆕 إنشاء حساب جديد للمدرس / المدير
+            </button>
+        </div>
+
+        <div id="registerSection" class="hidden" style="margin-top:18px; padding:16px; background:#f0f9ff; border-radius:14px; border:1px solid #bae6fd;">
+            <h3 style="margin:0 0 12px; color:#0369a1; font-size:17px;">📝 إنشاء حساب جديد</h3>
+            <div class="form-group">
+                <label>👤 الاسم الكامل</label>
+                <input type="text" id="regName" placeholder="مثال: المدرس أحمد محمد">
+            </div>
+            <div class="form-group">
+                <label>🔑 اسم المستخدم</label>
+                <input type="text" id="regUsername" placeholder="اختر اسم مستخدم فريد">
+            </div>
+            <div class="form-group">
+                <label>🔒 كلمة المرور</label>
+                <input type="password" id="regPassword" placeholder="4 أحرف أو أكثر">
+            </div>
+            <div class="form-group">
+                <label>💼 نوع الحساب</label>
+                <select id="regRole">
+                    <option value="teacher">مدرس</option>
+                    <option value="admin">مدير</option>
+                </select>
+            </div>
+            <div id="registerError" class="login-error hidden" style="margin:8px 0;"></div>
+            <button type="button" class="login-btn" onclick="handleRegister()" style="background:linear-gradient(135deg,#0ea5e9,#2563eb);">
+                ✅ إنشاء الحساب ثم تسجيل الدخول
+            </button>
+        </div>
+
+        <div style="text-align:center; margin-top: 18px;">
+            <button onclick="window.location.href='index.html'"
+                style="background:transparent; border:none; color:#4f46e5; cursor:pointer; font-weight:600; box-shadow:none;">
+                ↩️ العودة للرئيسية
+            </button>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script>
+        let currentRole = "student";
+
+        function switchRole(role) {
+            currentRole = role;
+            document.querySelectorAll(".role-tab").forEach(t => t.classList.remove("active"));
+            document.querySelector(`[data-role="${role}"]`).classList.add("active");
+
+            const uLabel = document.getElementById("usernameLabel");
+            const pLabel = document.getElementById("passwordLabel");
+            const uInput = document.getElementById("username");
+            const pInput = document.getElementById("password");
+
+            if (role === "student") {
+                uLabel.textContent = "🆔 id";
+                pLabel.textContent = "🔒 id الطالب (كلمة مرور)";
+                uInput.placeholder = "أدخل id الطالب (9 أرقام)";
+                pInput.placeholder = "أدخل id الطالب مجدداً";
+            } else if (role === "teacher") {
+                uLabel.textContent = "👤 اسم المستخدم";
+                pLabel.textContent = "🔒 كلمة المرور";
+                uInput.placeholder = "أدخل اسم المستخدم";
+                pInput.placeholder = "أدخل كلمة المرور";
+            } else {
+                uLabel.textContent = "👤 اسم المستخدم";
+                pLabel.textContent = "🔒 كلمة المرور";
+                uInput.placeholder = "اسم المستخدم للمدير";
+                pInput.placeholder = "كلمة مرور المدير";
+            }
+            hideError();
+        }
+
+        function showError(msg) {
+            const el = document.getElementById("loginError");
+            el.textContent = "❌ " + msg;
+            el.classList.remove("hidden");
+        }
+
+        function hideError() {
+            document.getElementById("loginError").classList.add("hidden");
+        }
+
+        function showRegError(msg) {
+            const el = document.getElementById("registerError");
+            el.textContent = "❌ " + msg;
+            el.classList.remove("hidden");
+        }
+
+        function hideRegError() {
+            document.getElementById("registerError").classList.add("hidden");
+        }
+
+        function toggleRegister() {
+            const sec = document.getElementById("registerSection");
+            sec.classList.toggle("hidden");
+            hideRegError();
+        }
+
+        function handleRegister() {
+            hideRegError();
+            const name = document.getElementById("regName").value.trim();
+            const username = document.getElementById("regUsername").value.trim();
+            const password = document.getElementById("regPassword").value.trim();
+            const role = document.getElementById("regRole").value;
+
+            if (!name || !username || !password) {
+                showRegError("من فضلك املئي جميع الحقول");
+                return;
+            }
+            if (password.length < 4) {
+                showRegError("كلمة المرور يجب أن تكون 4 أحرف على الأقل");
+                return;
+            }
+            const result = registerUser({ name: name, username: username, password: password, role: role });
+            if (!result.success) {
+                showRegError(result.message);
+                return;
+            }
+            const session = loginUser(username, password);
+            if (session) {
+                if (session.role === "student") {
+                    window.location.href = "student-dashboard.html";
+                } else {
+                    window.location.href = "teacher-dashboard.html";
+                }
+            } else {
+                showRegError("تم إنشاء الحساب ولكن تعذر تسجيل الدخول، حاولي تسجيل الدخول يدوياً");
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            if (!username || !password) {
+                showError("من فضلك أدخل جميع البيانات");
+                return;
+            }
+
+            const session = loginUser(username, password);
+            if (!session) {
+                showError("بيانات الدخول غير صحيحة");
+                return;
+            }
+
+            if (currentRole === "student" && session.role !== "student") {
+                showError("هذا الحساب ليس حساب طالب");
+                logoutUser();
+                return;
+            }
+            if (currentRole === "teacher" && session.role !== "teacher" && session.role !== "admin") {
+                showError("هذا الحساب ليس حساب مدرس");
+                logoutUser();
+                return;
+            }
+            if (currentRole === "admin" && session.role !== "admin") {
+                showError("هذا الحساب ليس حساب مدير");
+                logoutUser();
+                return;
+            }
+
+            if (session.role === "student") {
+                window.location.href = "student-dashboard.html";
+            } else {
+                window.location.href = "teacher-dashboard.html";
+            }
+        }
+    </script>
+
+</body>
+
+</html>

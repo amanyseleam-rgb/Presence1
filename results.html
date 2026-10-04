@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة النتائج والدرجات</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <header class="attendance-header">
+        <div class="back-home">
+            <button onclick="window.location.href='index.html'">
+                🏠 العودة للرئيسية
+            </button>
+        </div>
+        <h1>🎓 بوابة النتائج والدرجات</h1>
+        <p>إدارة وعرض درجات الطلاب في جميع المواد</p>
+    </header>
+
+    <main class="attendance-container">
+
+        <div class="nav-menu">
+            <button id="tabEnter" class="active" onclick="switchTab('enter')">✏️ إدخال الدرجات</button>
+            <button id="tabView" onclick="switchTab('view')">📊 عرض النتائج</button>
+        </div>
+
+        <div id="enterSection">
+            <div class="top-bar">
+                <div>
+                    <label for="gradeSelect">📚 الصف الدراسي</label>
+                    <select id="gradeSelect" onchange="populateClassesForResults()">
+                        <option value="">اختر الصف</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="classSelect">🏫 الفصل</label>
+                    <select id="classSelect" onchange="loadResultsForEntry()">
+                        <option value="">اختر الفصل</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="subjectSelect">📖 المادة</label>
+                    <select id="subjectSelect">
+                    </select>
+                </div>
+                <div>
+                    <label for="termSelect">📝 الفصل الدراسي</label>
+                    <select id="termSelect" class="term-select">
+                        <option value="الفصل الأول">الفصل الأول</option>
+                        <option value="الفصل الثاني">الفصل الثاني</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="action-buttons" style="margin: 0 0 20px 0; padding: 16px; background: var(--card); border-radius: 16px; box-shadow: var(--shadow);">
+                <button class="save-btn" onclick="saveAllResults()">💾 حفظ الدرجات</button>
+                <button class="print-btn" onclick="printResults()">🖨️ طباعة النتائج</button>
+                <button class="export-btn" onclick="exportResults()">📥 تصدير Excel</button>
+                <label class="import-btn" style="cursor:pointer; display:inline-block;">
+                    📤 استيراد من Excel
+                    <input type="file" id="importResults" accept=".xlsx,.xls,.csv" style="display:none;" onchange="importResults(event)">
+                </label>
+            </div>
+
+            <div id="resultsEntrySection" class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>م</th>
+                            <th>🆔 id</th>
+                            <th>👤 اسم الطالب</th>
+                            <th>🚻 الجنس</th>
+                            <th id="subjectHeader">الدرجة (من 100)</th>
+                            <th>📊 التقدير</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsEntryTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="viewSection" class="hidden">
+            <div class="top-bar">
+                <div>
+                    <label for="viewGradeSelect">📚 الصف الدراسي</label>
+                    <select id="viewGradeSelect" onchange="populateViewClasses()">
+                        <option value="">اختر الصف</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="viewClassSelect">🏫 الفصل</label>
+                    <select id="viewClassSelect" onchange="loadResultsView()">
+                        <option value="">اختر الفصل</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="viewTermSelect">📝 الفصل الدراسي</label>
+                    <select id="viewTermSelect" class="term-select" onchange="loadResultsView()">
+                        <option value="الفصل الأول">الفصل الأول</option>
+                        <option value="الفصل الثاني">الفصل الثاني</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="results-summary">
+                <div class="summary-item">
+                    <label>عدد الطلاب</label>
+                    <div class="value" id="sumCount">0</div>
+                </div>
+                <div class="summary-item">
+                    <label>المجموع الكلي</label>
+                    <div class="value" id="sumTotal">0</div>
+                </div>
+                <div class="summary-item">
+                    <label>المجموع الأعلى</label>
+                    <div class="value" style="color:#16a34a;" id="sumMax">0</div>
+                </div>
+                <div class="summary-item">
+                    <label>المجموع الأدنى</label>
+                    <div class="value" style="color:#dc2626;" id="sumMin">0</div>
+                </div>
+                <div class="summary-item">
+                    <label>نسبة النجاح</label>
+                    <div class="value" style="color:#4f46e5;" id="sumPass">0%</div>
+                </div>
+            </div>
+
+            <div class="action-buttons" style="margin: 0 0 20px 0;">
+                <button class="print-btn" onclick="printResultsView()">🖨️ طباعة البطاقة</button>
+                <button class="export-btn" onclick="exportResultsView()">📥 تصدير Excel</button>
+            </div>
+
+            <div id="resultsViewContainer" class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>🏆 الرتبة</th>
+                            <th>🆔 id</th>
+                            <th>👤 اسم الطالب</th>
+                            <th>🚻 الجنس</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsViewTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="database.js"></script>
+    <script src="utils.js"></script>
+    <script src="results.js"></script>
+
+</body>
+
+</html>

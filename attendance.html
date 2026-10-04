@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رصد الحضور والغياب</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <header class="attendance-header">
+        <div class="back-home">
+            <button onclick="window.location.href='index.html'">
+                🏠 العودة للرئيسية
+            </button>
+        </div>
+        <h1>📋 رصد الحضور والغياب</h1>
+        <p>تسجيل حضور وغياب الطلاب بسهولة وسرعة</p>
+    </header>
+
+    <main class="attendance-container">
+
+        <div class="scanner-box" style="text-align: center;">
+            <h3>📷 مسح باركود الطالب</h3>
+            <div id="reader" style="max-width: 320px; margin: 12px auto;"></div>
+            <div id="scan-result"></div>
+        </div>
+
+        <div class="top-bar">
+            <div>
+                <label for="gradeSelect">📚 الصف الدراسي</label>
+                <select id="gradeSelect" onchange="populateAttendanceClasses()">
+                    <option value="">اختر الصف</option>
+                </select>
+            </div>
+            <div>
+                <label for="classSelect">🏫 الفصل</label>
+                <select id="classSelect" onchange="displayAttendanceStudents()">
+                    <option value="">اختر الفصل</option>
+                </select>
+            </div>
+            <div>
+                <label for="date">📅 تاريخ الرصد</label>
+                <input type="date" id="date">
+            </div>
+            <div class="search-box">
+                <label for="search">🔎 بحث عن طالب</label>
+                <input type="text" id="search" placeholder="الاسم أو id...">
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <span>👥</span>
+                <div>
+                    <strong id="totalCount">0</strong>
+                    <small>إجمالي الطلاب</small>
+                </div>
+            </div>
+            <div class="stat-card present-stat">
+                <span>🟢</span>
+                <div>
+                    <strong id="presentCount">0</strong>
+                    <small>حاضر</small>
+                </div>
+            </div>
+            <div class="stat-card absent-stat">
+                <span>🔴</span>
+                <div>
+                    <strong id="absentCount">0</strong>
+                    <small>غائب</small>
+                </div>
+            </div>
+            <div class="stat-card pending-stat">
+                <span>⏳</span>
+                <div>
+                    <strong id="pendingCount">0</strong>
+                    <small>لم يتم التسجيل</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="save-section">
+            <button class="save-btn" onclick="saveAttendance()">
+                💾 حفظ رصد اليوم
+            </button>
+            <div class="action-buttons" style="margin-top: 10px;">
+                <button class="print-btn" onclick="printAttendance()">🖨️ طباعة سجل اليوم</button>
+                <button class="export-btn" onclick="exportAttendanceExcel()">📥 تصدير Excel</button>
+                <button class="barcode-btn" onclick="printCurrentClassBarcodes()">🏷️ طباعة باركودات الفصل</button>
+            </div>
+        </div>
+
+        <div id="attendanceSection" class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>م</th>
+                        <th>🆔 id</th>
+                        <th>👤 اسم الطالب</th>
+                        <th>الحالة</th>
+                        <th>⚙️ الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTable">
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <script src="database.js"></script>
+    <script src="utils.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>تقارير الحضور والغياب</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <header class="attendance-header">
+        <div class="back-home">
+            <button onclick="window.location.href='index.html'">
+                🏠 العودة للرئيسية
+            </button>
+        </div>
+        <h1>📊 تقارير الحضور والغياب</h1>
+        <p>متابعة سجل حضور وغياب الطلاب بشيء من التفصيل</p>
+    </header>
+
+    <main class="attendance-container">
+
+        <div class="top-bar">
+            <div>
+                <label for="gradeSelect">📚 الصف الدراسي</label>
+                <select id="gradeSelect" onchange="populateReportClasses()">
+                    <option value="">اختر الصف</option>
+                </select>
+            </div>
+            <div>
+                <label for="classSelect">🏫 الفصل</label>
+                <select id="classSelect" onchange="loadReports()">
+                    <option value="">اختر الفصل</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="report-box" id="reportBox">
+
+            <h2>🔎 البحث والإجراءات</h2>
+
+            <input
+                type="text"
+                id="reportSearch"
+                placeholder="البحث بالاسم أو id..."
+            >
+
+            <div class="action-buttons">
+                <button class="print-btn" onclick="printReports()">
+                    🖨️ طباعة التقرير
+                </button>
+                <button class="export-btn" onclick="exportReportExcel()">
+                    📥 تصدير Excel
+                </button>
+                <label class="import-btn" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                    📤 استيراد الحضور
+                    <input type="file" id="importAttendance" accept=".xlsx,.xls,.csv"
+                        style="display:none;" onchange="importAttendance(event)">
+                </label>
+            </div>
+
+        </div>
+
+        <div id="reportPrintSection" class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>م</th>
+                        <th>🆔 id</th>
+                        <th>👤 اسم الطالب</th>
+                        <th>🏫 الفصل</th>
+                        <th>🟢 الحضور</th>
+                        <th>🔴 الغياب</th>
+                        <th>📊 الأيام</th>
+                        <th>📈 النسبة</th>
+                    </tr>
+                </thead>
+
+                <tbody id="reportsTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+    <script src="database.js"></script>
+    <script src="utils.js"></script>
+    <script src="reports.js"></script>
+
+</body>
+
+</html>

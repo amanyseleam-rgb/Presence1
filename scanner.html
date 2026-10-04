@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماسح الباركود للكاميرا</title>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #f3f4f6;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        #reader {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .back-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #scan-result {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>📷 كاميرا رصد الحضور بالـ ID</h2>
+        <div id="reader"></div>
+        <p id="scan-result" style="color: green;"></p>
+
+        <button class="back-btn" onclick="window.location.href='attendance.html'">🔙 العودة لصفحة الحضور</button>
+    </div>
+
+    <script src="database.js"></script>
+    <script>
+        initDatabase();
+
+        function getStorageKeyForClass(classId, date) {
+            return "attendance_" + date + "_class_" + classId;
+        }
+
+        function onScanSuccess(decodedText) {
+            const scannedValue = decodedText.trim();
+            const resultElement = document.getElementById("scan-result");
+
+            const student = findStudentByNationalId(scannedValue) || findStudentByName(scannedValue);
+
+            if (!student) {
+                resultElement.style.color = "red";
+                resultElement.textContent = `❌ الكود (${scannedValue}) غير مسجل بالقائمة!`;
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            const storageKey = getStorageKeyForClass(student.classId, today);
+            let attendanceData = JSON.parse(localStorage.getItem(storageKey)) || [];
+
+            if (attendanceData.length === 0) {
+                const classStudents = getStudentsByClass(student.classId);
+                attendanceData = classStudents.map(s => ({
+                    studentId: s.id,
+                    nationalId: s.nationalId,
+                    name: s.name,
+                    status: "لم يتم التسجيل",
+                    classId: s.classId
+                }));
+            }
+
+            let found = false;
+            attendanceData.forEach(item => {
+                if (item.nationalId === student.nationalId) {
+                    item.status = "حاضر";
+                    found = true;
+                }
+            });
+
+            if (found) {
+                localStorage.setItem(storageKey, JSON.stringify(attendanceData));
+                resultElement.style.color = "green";
+                resultElement.textContent = `✅ تم تسجيل الحضور: ${student.name}`;
+            } else {
+                resultElement.style.color = "orange";
+                resultElement.textContent = `⚠️ الطالب: ${student.name} لكنه غير موجود في قائمة اليوم!`;
+            }
+        }
+
+        const html5QrCode = new Html5Qrcode("reader");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            {
+                fps: 10,
+                qrbox: { width: 250, height: 250 }
+            },
+            onScanSuccess,
+            (errorMessage) => {
+            }
+        ).catch((err) => {
+            console.error("خطأ في تشغيل الكاميرا", err);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>إدارة الطلاب</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <header class="attendance-header">
+        <div class="back-home">
+            <button onclick="window.location.href='index.html'">
+                🏠 العودة للرئيسية
+            </button>
+        </div>
+        <h1>👨‍🎓 إدارة الطلاب</h1>
+        <p>إضافة وتعديل وحذف بيانات الطلاب مع توليد الباركود</p>
+    </header>
+
+    <main class="attendance-container">
+
+        <div class="top-bar">
+            <div>
+                <label for="gradeSelect">📚 الصف الدراسي</label>
+                <select id="gradeSelect" onchange="populateClasses()">
+                    <option value="">اختر الصف</option>
+                </select>
+            </div>
+            <div>
+                <label for="classSelect">🏫 الفصل</label>
+                <select id="classSelect" onchange="displayStudents()">
+                    <option value="">اختر الفصل</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="student-form">
+            <input type="text" id="studentNationalId" placeholder="🆔 كود الطالب (ID)" maxlength="9">
+            <input type="text" id="studentName" placeholder="👤 اسم الطالب">
+            <select id="studentGender">
+                <option value="ذكر">ذكر</option>
+                <option value="أنثى">أنثى</option>
+            </select>
+            <button onclick="addNewStudent()">➕ إضافة طالب</button>
+        </div>
+
+        <div class="report-box">
+            <h2>🔎 البحث والإجراءات</h2>
+            <input type="text" id="studentSearch" placeholder="البحث بالاسم أو id...">
+            <div class="action-buttons">
+                <button class="export-btn" onclick="exportStudents()">📥 تصدير البيانات Excel</button>
+                <label class="import-btn" style="cursor:pointer;">
+                    📤 استيراد من Excel
+                    <input type="file" id="importFile" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handleImport(event)">
+                </label>
+                <button class="print-btn" onclick="printAllStudentBarcodes()">🏷️ طباعة جميع الباركودات</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>م</th>
+                        <th>🆔 id</th>
+                        <th>👤 اسم الطالب</th>
+                        <th>🚻 الجنس</th>
+                        <th>🏫 الفصل</th>
+                        <th>⚙️ الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsList"></tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <script src="database.js"></script>
+    <script src="utils.js"></script>
+    <script src="students.js"></script>
+
+</body>
+
+</html>

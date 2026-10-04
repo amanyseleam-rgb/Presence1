@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إحصائيات الحضور والغياب</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <header class="attendance-header">
+        <div class="back-home">
+            <button onclick="window.location.href='index.html'">
+                🏠 العودة للرئيسية
+            </button>
+        </div>
+        <h1>📈 الإحصائيات البيانية</h1>
+        <p>متابعة وتحليل نسب الحضور والغياب</p>
+    </header>
+
+    <main class="attendance-container">
+
+        <div class="top-bar">
+            <div>
+                <label for="gradeSelect">📚 الصف الدراسي</label>
+                <select id="gradeSelect" onchange="populateStatsClasses()">
+                    <option value="">اختر الصف</option>
+                </select>
+            </div>
+            <div>
+                <label for="classSelect">🏫 الفصل</label>
+                <select id="classSelect" onchange="loadStatistics()">
+                    <option value="">اختر الفصل</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats" id="statCards">
+            <div class="stat-card">
+                <span>👨‍🎓</span>
+                <div>
+                    <strong id="totalStudents">0</strong>
+                    <small>إجمالي الطلاب</small>
+                </div>
+            </div>
+            <div class="stat-card present-stat">
+                <span>✅</span>
+                <div>
+                    <strong id="totalPresent">0</strong>
+                    <small>حضور كلي</small>
+                </div>
+            </div>
+            <div class="stat-card absent-stat">
+                <span>❌</span>
+                <div>
+                    <strong id="totalAbsent">0</strong>
+                    <small>غياب كلي</small>
+                </div>
+            </div>
+            <div class="stat-card pending-stat">
+                <span>📊</span>
+                <div>
+                    <strong id="avgAttendance">0%</strong>
+                    <small>متوسط الحضور</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="report-box">
+            <h2>💡 ملاحظات الإحصائيات</h2>
+            <div class="action-buttons">
+                <button class="print-btn" onclick="printStatistics()">🖨️ طباعة الإحصائيات</button>
+                <button class="export-btn" onclick="exportStatisticsExcel()">📥 تصدير Excel</button>
+            </div>
+            <div id="attendanceBars" style="margin-top:24px;"></div>
+        </div>
+
+        <div id="statisticsPrintSection" class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>م</th>
+                        <th>🆔 id</th>
+                        <th>👤 اسم الطالب</th>
+                        <th>🏫 الفصل</th>
+                        <th>🟢 الحضور</th>
+                        <th>🔴 الغياب</th>
+                        <th>📊 الأيام</th>
+                        <th>📈 النسبة</th>
+                        <th>🏅 الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="statsTable"></tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <script src="database.js"></script>
+    <script src="utils.js"></script>
+    <script src="statistics.js"></script>
+</body>
+
+</html>
